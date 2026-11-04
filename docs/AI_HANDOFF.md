@@ -13,11 +13,21 @@ corrigir.
 
 ## Onde estamos
 
-Existe uma especificação auditada (v1.1.0), uma estrutura documental completa
-e um projeto Expo TypeScript que compila e passa no `expo-doctor`.
+Existe uma especificação auditada (v1.1.0), uma estrutura documental completa,
+um projeto Expo TypeScript que compila e passa no `expo-doctor`, e o SQL do
+banco **escrito mas nunca aplicado**.
 
-**Não existe nenhuma tela de produto, backend, banco ou GPS.** O `App.tsx` é
-apenas um ponto de entrada provisório.
+**Não existe nenhuma tela de produto, backend em execução, banco criado ou
+GPS.** O `App.tsx` é apenas um ponto de entrada provisório.
+
+| Frente | Estado real |
+|---|---|
+| Documentação e decisões | completo |
+| Projeto Expo | criado, `20/20` no doctor, `tsc` limpo |
+| MapLibre | não instalado, não provado |
+| SQL do banco | 6 migrações escritas, **0 aplicadas** |
+| RLS | desenhada, **não testada** |
+| RPCs de corrida | ainda não escritas |
 
 Stack verificada em 2026-11-04:
 

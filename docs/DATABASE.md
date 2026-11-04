@@ -1,8 +1,26 @@
 # Banco de dados
 
 Rascunho de modelagem derivado do `MASTER_SPEC.md` §7 e §9, já com as
-correções da auditoria. **Nada foi implementado.** As migrações só nascem na
-FASE 3.
+correções da auditoria.
+
+> **Status: SQL escrito, não aplicado, não testado.**
+> Os arquivos em `supabase/migrations/` existem, mas nunca rodaram em banco
+> nenhum. Aplicar e testar é tarefa da FASE 3, com projeto Supabase real.
+> Nenhuma afirmação de "funciona" deve ser feita antes disso.
+
+## Arquivos de migração
+
+| Arquivo | Conteúdo | Aplicado |
+|---|---|---|
+| `0001_profiles.sql` | enums, `profiles`, funções de contexto, proteção de papel | não |
+| `0002_catalogs.sql` | `drivers`, `vehicles`, `passengers`, limites, contexto de motorista | não |
+| `0003_active_rides.sql` | corridas ativas, índices únicos, checagens, travas de troca | não |
+| `0004_ride_operations.sql` | recibos de idempotência e limpeza | não |
+| `0005_driver_locations.sql` | localização ao vivo | não |
+| `0006_rls.sql` | RLS, grants e policies | não |
+| `0007_rpc.sql` | funções de transição | **a escrever** |
+| `0008_seed.sql` | dados fictícios de desenvolvimento | **a escrever** |
+
 
 Convenções gerais:
 
@@ -147,9 +165,12 @@ Uma linha por motorista, `upsert`. Removida quando o motorista fica
 | `recorded_at` | timestamptz | leitura do GPS |
 | `updated_at` | timestamptz | |
 
-## View `available_rides`
+## Função `list_available_rides()`
 
-Projeção restrita para o motorista encontrar ofertas.
+Projeção restrita para o motorista encontrar ofertas. Substitui a `view`
+prevista na ADR-010 (ver ADR-019).
+
+Retorna apenas:
 
 ```text
 id, pickup_label, destination_label,
@@ -158,8 +179,11 @@ destination_latitude, destination_longitude,
 estimated_fare_cents, created_at
 ```
 
-Filtro obrigatório: `status = 'requested' AND driver_id IS NULL`.
-Nunca expõe `passenger_id` nem dados do passageiro.
+Regras:
+- `security definer`, com `search_path` fixo;
+- exige que o chamador seja motorista ativo;
+- filtra `status = 'requested' AND driver_id IS NULL`;
+- nunca expõe `passenger_id`, nome ou telefone.
 
 ## Funções (RPC) previstas
 

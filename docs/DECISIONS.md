@@ -30,6 +30,83 @@ instalar SDK nesta máquina, publicar, contratar serviço ou expor credencial.
 
 ---
 
+## Opções consideradas e descartadas
+
+Registro das alternativas avaliadas. Serve para não repetir análise e para
+entender por que a escolha atual existe.
+
+### D-01 · Onde fica a memória do projeto
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| Só nas conversas com IA | zero esforço | perdida ao trocar de modelo/conta | **descartada** |
+| Documentos soltos no computador | simples | sem histórico, sem backup | **descartada** |
+| Documentos + Git + remote privado | histórico, backup, auditoria, troca de máquina | exige disciplina de commit | **escolhida** |
+| Wiki externa (Notion, etc.) | fácil de ler | fora do código, desatualiza | **descartada** |
+
+### D-02 · Repositório remoto
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| só local | nenhuma configuração | perde tudo se o disco falhar | **descartada** (ADR-015) |
+| GitHub público | grátis, visível | expõe regras de negócio e dados de teste | **descartada** |
+| GitHub privado | grátis, histórico, controle | depende de conta | **escolhida** |
+| GitLab / Bitbucket / self-hosted | equivalentes | sem ganho aqui | **descartada** |
+
+### D-03 · Versão do Expo
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| SDK 57 (template padrão) | mais maduro, compatível com Expo Go | um ciclo atrás, atualização em breve | **descartada** |
+| SDK 58 (latest) | atual, MapLibre 11.5.1 exige `expo ≥54` | exposição a bugs recentes | **escolhida** (ADR-017) |
+
+### D-04 · Como a administração escolhe o ponto no mapa
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| digitar latitude/longitude | zero dependência | inviável na prática | **descartada** |
+| tocar no mapa | simples, sem serviço externo | exige mapa funcionando | **escolhida** (ADR-014) |
+| geocodificação por endereço | amigável | provedor, termos, custo, mais um risco | **descartada por ora** (P-03) |
+
+### D-05 · Como o motorista vê solicitações sem dono
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| liberar `SELECT` em `active_rides` | simples | expõe `passenger_id` e telefone | **descartada** |
+| `view` com filtro | expõe só o necessário | RLS recursiva, fácil errar | **descartada** na revisão |
+| função RPC restrita | controle explícito, testável | mais uma função | **escolhida** |
+| Realtime puro, sem consulta | tempo real | sem recuperação se perder evento | **descartada** |
+
+**Nota:** a ADR-010 falava em `view`. Ao escrever o SQL ficou claro que a
+`view` com RLS recursiva é frágil. Substituída por função RPC
+`list_available_rides()`. Registrado como ADR-019.
+
+### D-06 · Recusa de solicitação
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| tabela `ride_declines` | memória real de recusa | cria tabela de eventos; beira histórico | **descartada** (ADR-007) |
+| recusa só no cliente | zero persistência | oferta reaparece ao reabrir | **escolhida** |
+| estado `declined` na corrida | modelagem explícita | exige novo estado e reatribuição | **descartada** |
+
+### D-07 · Cancelamento em `in_progress`
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| motorista e admin | flexível | motorista abandona corrida em andamento | **descartada** |
+| somente admin | protege o registro da corrida | depende do admin estar disponível | **escolhida** (ADR-008) |
+| ninguém | máxima integridade | corrida travada para sempre | **descartada** |
+
+### D-08 · Criptografia do SQLite
+
+| Opção | Prós | Contras | Veredito |
+|---|---|---|---|
+| SQLCipher (op-sqlite) | banco local cifrado | módulo nativo extra, complexidade | **adiada** (P-04) |
+| `expo-sqlite` sem cifra, guardando só o mínimo | simples | dados em claro no aparelho | **escolhida** (ADR-013) |
+| não persistir nada localmente | máxima privacidade | não recupera corrida após reinício | **descartada** |
+
+---
+
 ## ADR-001 — Uma única estrutura de documentação
 
 **Status:** Aceita · 2026-11-03
@@ -330,6 +407,29 @@ propósito real aparecer, por fase.
 
 **Consequência.** Nenhum `index.ts` vazio, nenhum `.gitkeep`. A estrutura
 final continua documentada na spec §17 como destino, não como estado atual.
+
+---
+
+## ADR-019 — Ofertas por função RPC, não por `view`
+
+**Status:** Aceita · 2026-11-04 · substitui a parte de `view` da ADR-010
+
+**Contexto.** A ADR-010 previa uma `view` `available_rides`. Ao escrever o
+SQL, apareceu o problema: com `security_invoker = true` a RLS da tabela
+bloqueia o motorista; com `security_invoker = false` a `view` ignora RLS e
+passa a ser uma porta dos fundos, que qualquer policy futura pode abrir sem
+perceber.
+
+**Decisão.** A listagem de ofertas passa a ser a função
+`public.list_available_rides()`, `security definer`, que:
+
+-   exige que o chamador seja motorista ativo;
+-   retorna apenas colunas públicas da oferta;
+-   filtra `status = 'requested' AND driver_id IS NULL`;
+-   não expõe `passenger_id`, nome nem telefone.
+
+**Consequência.** O ponto de exposição fica em uma função explícita, coberta
+por teste de segurança, em vez de depender de comportamento de `view`.
 
 ---
 

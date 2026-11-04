@@ -3,6 +3,25 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.5.0] — 2026-11-04
+
+Avanço em desenho de backend, sem aplicar nada em banco.
+
+### Adicionado
+
+-   `docs/SECURITY.md`: modelo de confiança, matriz de acesso, criação de
+    contas, primeiro administrador, proibições e testes de segurança.
+-   `supabase/migrations/0001` a `0006`: enums, perfis, cadastros, corridas,
+    recibos, localização e RLS.
+-   ADR-019: ofertas por função RPC, substituindo a `view` da ADR-010.
+-   Seção "Opções consideradas e descartadas" em `docs/DECISIONS.md`, com 8
+    decisões e o motivo de cada alternativa rejeitada.
+
+### Importante
+
+-   Nenhuma migração foi aplicada. Nenhum teste de banco foi executado.
+-   `docs/DATABASE.md` marca explicitamente o status de cada arquivo.
+
 ## [1.4.0] — 2026-11-04
 
 ### Adicionado
