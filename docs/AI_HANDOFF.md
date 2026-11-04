@@ -99,6 +99,7 @@ Se estiver na máquina de build:
 - Passageiros não têm login nem aplicativo.
 - Não haverá histórico de viagens — decisão de produto, não esquecimento.
 - O responsável está aprendendo programação: explique com clareza.
+- **Escopo Android exclusivamente:** o DRIVER APP é desenvolvido, compilado e distribuído somente para Android (ADR-020). Não há suporte a iOS, iPhone, Xcode, CocoaPods, Swift ou Objective-C.
 
 ## Critério para considerar a FASE 2 encerrada
 

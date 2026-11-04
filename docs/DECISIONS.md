@@ -443,3 +443,28 @@ por teste de segurança, em vez de depender de comportamento de `view`.
 | P-05 | Nome, marca e identidade visual | FASE 2 | FASE 2 |
 | P-06 | Política de retenção de logs técnicos | FASE 3 | FASE 3 |
 | P-07 | Licença do projeto (não copiamos a MIT do template) | Publicação | Antes de qualquer distribuição |
+
+---
+
+## ADR-020 — Escopo do projeto: Android exclusivamente
+
+**Status:** Aceita · 2026-11-04
+
+**Contexto.** O DRIVER APP é especificado como um aplicativo Android (MASTER_SPEC.md §1, §23). Nenhuma decisão ou documento anterior mencionou suporte a iOS, iPhone, Xcode, CocoaPods, Swift ou Objective-C. O objetivo é evitar qualquer expansão de escopo não autorizada para outra plataforma.
+
+**Decisão.** O DRIVER APP será desenvolvido, compilado e distribuído exclusivamente para **Android**.
+
+Regras decorrentes:
+1. Não incluir iOS ou iPhone no planejamento de qualquer fase.
+2. Não adicionar configurações específicas para iOS em `app.json`, `app.config.ts` ou arquivos nativos.
+3. Não instalar Xcode nem ferramentas da Apple.
+4. Não criar instruções de build para iOS.
+5. Não adicionar dependências exclusivamente para compatibilidade com iOS.
+6. Não alterar a arquitetura existente sem autorização explícita.
+7. Priorizar estabilidade, desempenho e funcionamento real no Android.
+8. Utilizar aparelho Android físico para testes de GPS, mapas e notificações.
+9. Preservar as decisões arquiteturais já documentadas.
+
+**Consequência.** Todas as futuras decisões, documentação e tarefas devem presumir Android como a única plataforma alvo. Qualquer proposta de suporte a iOS exigirá uma nova ADR e autorização explícita do proprietário do projeto.
+
+**Referências verificadas.** Nenhuma referência a iOS, iPhone, Xcode, CocoaPods, Swift, Objective-C ou macOS foi encontrada nos documentos existentes do projeto (`docs/`, `MASTER_SPEC.md`, `AGENTS.md`, `CHANGELOG.md`, `AI_HANDOFF.md`, `BUILD_MACHINE_HANDOFF.md`). Bibliotecas de terceiros (como MapLibre RN) podem ter suporte a iOS internamente, mas isso não constitui requisito do projeto.
