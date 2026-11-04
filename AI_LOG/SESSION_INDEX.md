@@ -5,6 +5,7 @@ Uma linha por sessão relevante. Registro completo em `AAAA-MM-DD/`.
 | Data | Fase | Tema | Decisões geradas | Modelo |
 |---|---|---|---|---|
 | 2026-11-03 | 0 e 1A | Auditoria do ambiente, revisão da spec, fundação documental | ADR-001 a ADR-016 | DeepSeek V4.1 Flash (OpenCode) |
+| 2026-11-04 | 1B | Projeto Expo criado, matriz de versões verificada | ADR-016 corrigida, ADR-017, ADR-018 | DeepSeek V4.1 Flash (OpenCode) |
 
 ## Como registrar
 

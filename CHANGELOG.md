@@ -3,6 +3,31 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.2.0] — 2026-11-04
+
+FASE 1B: projeto Expo criado. Ainda **sem telas, backend ou GPS**.
+
+### Adicionado
+
+-   Projeto Expo SDK 58.0.23 com TypeScript, React Native 0.88.1 e React
+    19.3.0.
+-   `app.json` com `name`, `slug`, `scheme` e `android.package` definidos.
+-   `src/constants/app.ts` com constantes reais do produto.
+-   Scripts `typecheck` e `doctor`.
+-   `.gitattributes`, para evitar reescrita de fim de linha entre máquinas.
+
+### Corrigido
+
+-   ADR-016: Node 26.13.0 **é LTS** e é suportado pelo Expo 58. A avaliação
+    anterior da auditoria estava errada e foi corrigida no documento.
+-   `newArchEnabled` removido: não é campo válido no SDK 58 (arquitetura nova
+    é o único modo).
+
+### Verificado
+
+-   `npx expo-doctor`: 20/20 checks.
+-   `tsc --noEmit`: sem erros.
+
 ## [1.1.0] — 2026-11-03
 
 Revisão de auditoria da especificação. Nenhuma linha de código de aplicativo

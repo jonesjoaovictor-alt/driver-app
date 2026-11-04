@@ -13,7 +13,7 @@ auditoria.
 | # | Item | Resultado | Evidência |
 |---|---|---|---|
 | 1 | Diretório e isolamento | **APROVADO** | `C:\Users\jones\Documents\driveapp`, apenas `MASTER_SPEC.md`. Nenhum outro projeto acessado. |
-| 2 | Node.js | **ATENÇÃO** | `v26.13.0` em `C:\Program Files\nodejs\node.exe`. Versão `current`, não LTS. |
+| 2 | Node.js | **APROVADO** | `v26.13.0` — é a **Latest LTS (Lithium)** desde out/2026. Verificado no calendário oficial e em `npm view expo engines`, que aceita `^26.0.0`. *Corrigido em 2026-11-04: a avaliação original classificou como ATENÇÃO por presunção errada de que não era LTS.* |
 | 3 | npm / npm.cmd | **ATENÇÃO** | `npm.cmd` 11.20.0 funciona. `npm.ps1` bloqueado pela Execution Policy. |
 | 4 | Git | **BLOQUEADO** | Não instalado. |
 | 5 | JDK | **BLOQUEADO** | Sem `java`, `JAVA_HOME` ou `C:\Program Files\Java`. |
@@ -78,7 +78,7 @@ quatro contradições e oito lacunas.
 | ID | Risco | Mitigação |
 |---|---|---|
 | R-01 | MapLibre é módulo nativo; pode não funcionar no Expo atual | Prova isolada na FASE 2, antes das telas |
-| R-02 | Node 26 fora do LTS | ADR-016 |
+| R-02 | Node 26 fora do LTS | **Encerrado.** Node 26.13.0 é LTS e o Expo 58 o suporta (ADR-016 corrigida). |
 | R-03 | 8 GB de RAM para Gradle e Android Studio | Build em aparelho físico; sem emulador |
 
 ### Itens aceitos sem alteração

@@ -255,16 +255,59 @@ remote não protege o banco Supabase.
 
 ## ADR-016 — Node LTS, não `current`
 
-**Status:** Aceita · 2026-11-03
+**Status:** Aceita · 2026-11-03 · **Corrigida em 2026-11-04**
 
-**Contexto.** A máquina de documentação tem Node 26 (`current`), não
-homologado por padrão pelo Expo.
+**Contexto.** A máquina de documentação tem Node 26. Na época da auditoria,
+presumi que fosse versão `current` e não LTS.
 
-**Decisão.** Usar LTS suportado. Se necessário, instalar LTS em paralelo,
-sem remover a versão atual. Registrar a escolha em `docs/ENVIRONMENT.md`.
+**Correção.** A verificação nas fontes oficiais mostrou que **Node 26.13.0 é a
+Latest LTS (Lithium)** desde outubro de 2026, e que o Expo 58 declara
+`engines.node: ^22.13.0 || ^24.3.0 || ^26.0.0 || >=27.0.0`. Node 26 é
+suportado oficialmente.
 
-**Consequência.** Evita erro obscuro de Metro/Expo causado por versão de
-runtime.
+**Decisão.** Usar Node 26 LTS, já instalado. Nenhuma instalação adicional.
+A regra permanente continua: conferir `engines` do Expo e o status LTS antes
+de trocar de runtime.
+
+**Lição.** Não deduzir versão por número. Verificar `npm view <pkg> engines` e
+o calendário oficial do Node.
+
+---
+
+## ADR-017 — Expo SDK 58, e não o template padrão 57
+
+**Status:** Aceita · 2026-11-04
+
+**Contexto.** `create-expo-app` com `blank-typescript` entregou o template
+`blank-typescript@sdk-57`, marcado como compatível com Expo Go. O projeto
+usa Development Build e módulos nativos, então compatibilidade com Expo Go
+é irrelevante.
+
+**Verificação feita.** `@maplibre/maplibre-react-native` 11.5.1 declara
+`expo >= 54.0.0` e `react-native >= 0.80.0`. O SDK 58 traz React Native
+0.88.1 e React 19.3.0, portanto está dentro do suportado.
+
+**Decisão.** Usar `blank-typescript@latest` com Expo SDK 58.0.23.
+
+**Consequência.** Começamos na versão estável mais recente, sem dívida de
+atualização imediata. O risco do MapLibre continua no escopo da prova da
+FASE 2 (P-01), agora com a matriz de versões já registrada.
+
+---
+
+## ADR-018 — `src/` cresce por demanda, não com pastas vazias
+
+**Status:** Aceita · 2026-11-04
+
+**Contexto.** A spec §17 lista muitas pastas em `src/`, mas Git não versiona
+pasta vazia e a própria spec proíbe arquivo vazio sem finalidade.
+
+**Decisão.** Nesta fase existe apenas `src/constants/app.ts`, com constantes
+reais do produto. As demais pastas são criadas quando o primeiro arquivo com
+propósito real aparecer, por fase.
+
+**Consequência.** Nenhum `index.ts` vazio, nenhum `.gitkeep`. A estrutura
+final continua documentada na spec §17 como destino, não como estado atual.
 
 ---
 
@@ -273,8 +316,8 @@ runtime.
 | ID | Assunto | Bloqueia | Prazo |
 |---|---|---|---|
 | P-01 | Prova real do MapLibre no Expo atual | FASE 2 em diante | FASE 2, antes das telas |
-| P-02 | `targetSdkVersion` exata e aparelho mínimo de teste | FASE 1B | FASE 1B |
 | P-03 | Provedor de geocodificação/rota (se houver) | FASE 8 | Antes da FASE 8 |
 | P-04 | Necessidade real de SQLCipher | FASE 6 | FASE 6 |
 | P-05 | Nome, marca e identidade visual | FASE 2 | FASE 2 |
 | P-06 | Política de retenção de logs técnicos | FASE 3 | FASE 3 |
+| P-07 | Licença do projeto (não copiamos a MIT do template) | Publicação | Antes de qualquer distribuição |

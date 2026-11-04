@@ -4,9 +4,9 @@ Aplicativo Android de transporte para testes controlados, com interface de
 motorista e administração oculta. Arquitetura, código e identidade próprios.
 A Uber é apenas referência de experiência.
 
-> **Estado atual: FASE 1A — fundação documental.**
-> Não há código de aplicativo. Nenhuma decisão de UI ou banco foi
-> implementada ainda.
+> **Estado atual: FASE 1B concluída — projeto Expo criado.**
+> Existe a estrutura e o ponto de entrada, **sem telas de produto, backend ou
+> GPS**. A FASE 2 começa pela prova do MapLibre.
 
 ## Leia nesta ordem
 

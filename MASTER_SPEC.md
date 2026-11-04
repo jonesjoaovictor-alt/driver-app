@@ -667,14 +667,14 @@ Usar `npx expo install` quando aplicável e executar `npx expo-doctor`.
 Não fixar versões cegamente nem atualizar dependências sem
 justificativa.
 
-Usar a versão LTS do Node.js homologada pelo Expo. Versões `current` do
-Node, mesmo recentes, não são presumidamente suportadas e exigem
-validação antes de iniciar o projeto; se necessário, instalar um LTS em
-paralelo, sem remover a versão existente.
+Usar a versão LTS do Node.js homologada pelo Expo. Verificado em
+2026-11-04: Node 26.13.0 é LTS (Lithium) e o Expo 58 declara suporte a
+`^26.0.0`. A regra continua valendo para versões futuras: conferir
+`npm view expo engines` e o calendário oficial antes de trocar o runtime.
 
-`minSdkVersion` inicial: 24. `targetSdkVersion` deve seguir a exigência
-atual da plataforma e ser registrado em `docs/ENVIRONMENT.md` quando o
-projeto for criado.
+`minSdkVersion` 24, `targetSdkVersion` 36 e `compileSdkVersion` 37, com
+toolchain Java 17, conforme o React Native 0.88.1. Esses valores ficam
+registrados em `docs/ENVIRONMENT.md` e mudam apenas com nova ADR.
 
 ## 17. Estrutura de pastas proposta
 

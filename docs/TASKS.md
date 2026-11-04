@@ -33,16 +33,17 @@ Fases oficiais estão no `MASTER_SPEC.md` §23.
 
 ---
 
-## FASE 1B — Projeto Expo · `[ ]`
+## FASE 1B — Projeto Expo · `[x]`
 
--   [ ] Confirmar versão LTS de Node homologada pelo Expo
--   [ ] `create-expo-app` com TypeScript na pasta existente
--   [ ] `npx expo-doctor` sem erros
--   [ ] Registrar matriz de versões em `docs/ENVIRONMENT.md`
--   [ ] Definir `minSdk` e `targetSdk`
--   [ ] Estrutura de `src/` conforme spec §17
--   [ ] Confirmar que nada de backend ou GPS foi implementado
--   [ ] Commit aprovado
+-   [x] Confirmar versão LTS de Node homologada pelo Expo (26.13.0 LTS)
+-   [x] `create-expo-app` com TypeScript, SDK 58.0.23
+-   [x] `npx expo-doctor` — 20/20 checks
+-   [x] Matriz de versões em `docs/ENVIRONMENT.md`
+-   [x] `minSdk` 24 e `targetSdk` 36 definidos
+-   [x] `src/` iniciado com `constants/app.ts` (ADR-018)
+-   [x] Nenhum backend, banco, GPS ou tela de produto
+-   [x] `tsc --noEmit` sem erros
+-   [ ] Commit + push aprovados
 
 ---
 

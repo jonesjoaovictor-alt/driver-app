@@ -4,8 +4,8 @@ Estado do projeto para quem assume agora. Atualizar ao final de toda etapa
 aprovada. Se este arquivo estiver desatualizado, ele é a primeira coisa a
 corrigir.
 
-**Última atualização:** 2026-11-03
-**Fase:** 1A concluída — aguardando autorização para 1B
+**Última atualização:** 2026-11-04
+**Fase:** 1B concluída — aguardando autorização para a FASE 2
 **Remote:** `github.com/jonesjoaovictor-alt/driver-app` (privado)
 **Compila Android nesta máquina:** não (ver `docs/ENVIRONMENT.md`)
 
@@ -13,14 +13,27 @@ corrigir.
 
 ## Onde estamos
 
-A especificação existe, foi auditada e corrigida para a versão 1.1.0. A
-estrutura documental está montada. **Não existe código de aplicativo, banco
-ou tela.** Nada foi instalado além do Git.
+Existe uma especificação auditada (v1.1.0), uma estrutura documental completa
+e um projeto Expo TypeScript que compila e passa no `expo-doctor`.
 
-O que foi decidido está em `docs/DECISIONS.md` (16 ADRs). O que falta está em
-`docs/TASKS.md`.
+**Não existe nenhuma tela de produto, backend, banco ou GPS.** O `App.tsx` é
+apenas um ponto de entrada provisório.
+
+Stack verificada em 2026-11-04:
+
+| Componente | Versão |
+|---|---|
+| Expo SDK | 58.0.23 |
+| React Native | 0.88.1 |
+| React | 19.3.0 |
+| TypeScript | 6.0.3 |
+| Node.js | 26.13.0 (LTS) |
+
+18 ADRs registradas em `docs/DECISIONS.md`. Pendências P-01 a P-07.
 
 ## O que foi feito nesta sessão
+
+**2026-11-03**
 
 1. Leitura integral do `MASTER_SPEC.md` 1.0.0.
 2. Auditoria do ambiente (FASE 0), somente leitura.
@@ -32,42 +45,54 @@ O que foi decidido está em `docs/DECISIONS.md` (16 ADRs). O que falta está em
    `AI_LOG/`.
 7. Commit `7e75469` publicado no repositório privado.
 
+**2026-11-04**
+
+8. Confirmado que Node 26.13.0 é LTS e suportado pelo Expo 58 (ADR-016
+   corrigida).
+9. Projeto Expo SDK 58 criado com TypeScript.
+10. `expo-doctor` 20/20 e `tsc --noEmit` limpo.
+11. `app.json` configurado: `com.jonesjoaovictor.driverapp`, scheme
+    `driverapp`.
+12. Matriz de versões e requisitos da máquina de build registrados em
+    `docs/ENVIRONMENT.md`.
+
 ## Próximo passo exato
 
-A FASE 1A está encerrada. Commit `7e75469` publicado em
-`github.com/jonesjoaovictor-alt/driver-app`.
+**FASE 2 — Interface. Mas ela começa pela prova do MapLibre, não pela tela.**
 
-**Próximo passo:** aguardar autorização expressa do responsável para iniciar
-a **FASE 1B — Projeto Expo**.
+Ordem obrigatória:
 
-Quando autorizado, a ordem é:
+1. Autorização do responsável.
+2. Prova isolada: instalar `@maplibre/maplibre-react-native` 11.5.1,
+   configurar o plugin do Expo, gerar Development Build e exibir um mapa
+   com OpenFreeMap.
+3. Se o mapa funcionar: registrar o resultado e seguir para a identidade
+   visual.
+4. Se não funcionar: **parar**, registrar a evidência e propor alternativa
+   antes de escrever qualquer tela.
 
-```powershell
-npx create-expo-app@latest . --template blank-typescript
-npx expo install --fix
-npx expo-doctor
-```
-
-Antes disso, confirmar a versão LTS de Node homologada pelo Expo (ADR-016).
-Não criar telas, backend ou GPS nesta fase.
+Nada de telas antes de o mapa estar provado (P-01).
 
 ## O que NÃO fazer agora
 
--   Não criar o projeto Expo sem autorização (FASE 1B).
+-   Não criar telas de produto antes da prova do MapLibre.
 -   Não criar tabelas ou migrações (FASE 3).
 -   Não instalar JDK, Android Studio ou SDK nesta máquina.
 -   Não alterar decisões registradas sem nova ADR.
 -   Não "melhorar" a especificação por conta própria.
+-   Não adicionar Supabase, GPS ou permissões nesta fase.
 
 ## Armadilhas conhecidas
 
 | Armadilha | O que fazer |
 |---|---|
 | `npm` no PowerShell falha | usar `npm.cmd` |
+| `npx` no PowerShell pode falhar | usar `npx.cmd` |
 | Git fora do PATH nesta sessão | usar caminho completo ou abrir terminal novo |
 | Pasta antiga `Documents\driveapp` vazia e travada | ignorar; some após reiniciar |
-| Node 26 não é LTS | validar antes da FASE 1B (ADR-016) |
-| MapLibre pode não funcionar no Expo atual | prova isolada antes das telas (P-01) |
+| `newArchEnabled` no `app.json` quebra o schema | não usar; é o único modo no SDK 58 |
+| `create-expo-app` puxa o template SDK 57 por padrão | usar `--template blank-typescript@latest` |
+| MapLibre exige Development Build | nunca presumir que roda no Expo Go |
 
 ## Contexto que não está no código
 
@@ -78,9 +103,11 @@ Não criar telas, backend ou GPS nesta fase.
     esquecimento.
 -   O responsável está aprendendo programação: explique com clareza.
 
-## Critério para considerar a FASE 1A encerrada
+## Critério para considerar a FASE 2 encerrada
 
--   [ ] Commit inicial feito
--   [ ] Remote privado configurado e com push
--   [ ] Leitura de `MASTER_SPEC.md` e `AGENTS.md` sem contradições internas
--   [ ] `docs/TASKS.md` marcando 1A como concluída
+-   [ ] MapLibre renderizando em aparelho físico
+-   [ ] Identidade visual aprovada
+-   [ ] Tela do motorista com estado online/offline
+-   [ ] Entrada administrativa por sete toques
+-   [ ] Estados de erro visuais definidos
+-   [ ] Nenhum dado real de pessoa nos cadastros
