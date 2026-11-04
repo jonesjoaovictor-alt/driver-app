@@ -108,6 +108,116 @@ export interface DriverLiveLocation {
  */
 export interface Database {
   public: {
+    Functions: {
+      accept_ride: {
+        Args: {
+          p_ride_id: string;
+          p_idempotency_key: string;
+          p_driver_id: string;
+        };
+        Returns: string;
+      };
+      mark_driver_arriving: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+        };
+        Returns: string;
+      };
+      mark_arrived: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+        };
+        Returns: string;
+      };
+      start_ride: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+        };
+        Returns: string;
+      };
+      complete_ride: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+          p_idempotency_key: string;
+        };
+        Returns: string;
+      };
+      cancel_ride: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+          p_reason: string;
+          p_actor: 'admin' | 'driver';
+        };
+        Returns: string;
+      };
+      list_available_rides: {
+        Args: {};
+        Returns: ActiveRide[];
+      };
+      set_availability: {
+        Args: {
+          p_availability: 'offline' | 'online' | 'busy';
+        };
+        Returns: void;
+      };
+      upsert_location: {
+        Args: {
+          p_latitude: number;
+          p_longitude: number;
+          p_accuracy: number | null;
+          p_heading: number | null;
+          p_speed: number | null;
+          p_recorded_at: string;
+        };
+        Returns: void;
+      };
+      create_ride: {
+        Args: {
+          p_passenger_id: string;
+          p_pickup_latitude: number;
+          p_pickup_longitude: number;
+          p_pickup_label: string;
+          p_destination_latitude: number;
+          p_destination_longitude: number;
+          p_destination_label: string;
+          p_estimated_fare_cents: number;
+        };
+        Returns: string;
+      };
+      create_driver: {
+        Args: {
+          p_profile_id: string;
+        };
+        Returns: string;
+      };
+      create_passenger: {
+        Args: {
+          p_name: string;
+          p_phone: string | null;
+        };
+        Returns: string;
+      };
+      set_role: {
+        Args: {
+          p_profile_id: string;
+          p_role: 'admin' | 'driver';
+        };
+        Returns: void;
+      };
+      create_driver_account: {
+        Args: {
+          p_auth_user_id: string;
+          p_full_name: string;
+          p_phone: string | null;
+        };
+        Returns: string;
+      };
+    };
     Tables: {
       profiles: {
         Row: Profile;
