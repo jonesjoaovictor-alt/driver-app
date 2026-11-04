@@ -1,40 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from './src/app/providers/AuthProvider';
+import { RootNavigator } from './src/app/navigation/RootNavigator';
 
 /**
- * Ponto de entrada provisório da FASE 1B.
+ * Ponto de entrada do aplicativo DRIVER APP.
  *
- * Não é uma tela do produto. Serve apenas para confirmar que o projeto
- * compila e executa. A navegação e as telas reais entram na FASE 2,
- * conforme MASTER_SPEC.md §23.
+ * Envolve a navegação com AuthProvider para gerenciar a sessão do Supabase.
+ * O estado inicial é a tela de Login; após autenticação bem-sucedida, o
+ * usuário é direcionado para a tela do motorista.
+ *
+ * NOTA: A navegação condicional entre Login e Driver com base na sessão
+ * será implementada após a conexão com Supabase ser testada. Por enquanto,
+ * o RootNavigator renderiza as duas telas disponíveis.
  */
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>DRIVER APP</Text>
-      <Text style={styles.subtitle}>FASE 1B — estrutura criada</Text>
-      <StatusBar style="light" />
-    </View>
+    <AuthProvider>
+      <NavigationContainer>
+        <StatusBar style="light" />
+        <RootNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0F172A',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  title: {
-    color: '#F8FAFC',
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  subtitle: {
-    color: '#94A3B8',
-    fontSize: 14,
-    marginTop: 8,
-  },
-});
