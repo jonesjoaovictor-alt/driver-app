@@ -3,6 +3,15 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.4.0] — 2026-11-04
+
+### Adicionado
+
+-   `docs/RESUME.md`: página única de retomada em outra máquina, com
+    comandos, decisões já tomadas e o que ainda está bloqueado.
+-   Seção "Decisões do responsável pelo projeto" em `docs/DECISIONS.md`,
+    com data, escolha e limite da delegação.
+
 ## [1.3.0] — 2026-11-04
 
 Preparação da prova de viabilidade do mapa (FASE 2A).

@@ -8,6 +8,28 @@ Legenda de status: **Aceita** · **Pendente** · **Substituída**
 
 ---
 
+## Decisões do responsável pelo projeto
+
+Escolhas feitas pelo dono do projeto, não pela IA. Ficam aqui para não serem
+rediscutidas sem motivo.
+
+| Data | Decisão | Escolha |
+|---|---|---|
+| 2026-11-03 | Autorizar saída da FASE 0 | Git + estrutura + spec v1.1 |
+| 2026-11-03 | Nome da pasta do projeto | `driver-app` |
+| 2026-11-03 | Repositório remoto | GitHub privado |
+| 2026-11-03 | Autor do commit | `jonejoaovictor <jonejoaovictor@gmail.com>` |
+| 2026-11-04 | Autorizar a FASE 1B | Sim |
+| 2026-11-04 | Delegação de decisão técnica | IA decide dentro do escopo da fase |
+| 2026-11-04 | Prioridade após a FASE 1B | Caminho A: máquina de build primeiro |
+| 2026-11-04 | Continuidade | Registrar tudo para revisão em outra máquina |
+
+**Limite da delegação:** vale para decisões técnicas dentro da fase
+autorizada. Não autoriza mudar o `MASTER_SPEC.md`, trocar biblioteca de mapa,
+instalar SDK nesta máquina, publicar, contratar serviço ou expor credencial.
+
+---
+
 ## ADR-001 — Uma única estrutura de documentação
 
 **Status:** Aceita · 2026-11-03

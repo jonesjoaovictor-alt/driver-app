@@ -81,3 +81,16 @@ A decisão foi o **caminho A**: ir para a máquina de build agora.
 Como esta máquina não compila Android, a entrega é operacional: guia completo,
 prompt da prova e critério de aceite. Ver `docs/BUILD_MACHINE.md` e
 `PROMPTS/PHASE_2A.md`.
+
+## 8. Registro de continuidade
+
+Pedido de 2026-11-04: guardar as decisões para revisão no dia seguinte, em
+outra máquina.
+
+Criado `docs/RESUME.md` como ponto único de retomada. As escolhas do
+responsável ficaram registradas em `docs/DECISIONS.md`, na seção "Decisões do
+responsável pelo projeto", com data e limite da delegação.
+
+O repositório remoto é a garantia: qualquer máquina que clonar
+`github.com/jonesjoaovictor-alt/driver-app` recebe todo o contexto, sem
+depender desta sessão.

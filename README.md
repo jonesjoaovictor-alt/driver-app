@@ -12,13 +12,14 @@ A Uber é apenas referência de experiência.
 
 | Ordem | Arquivo | Para que serve |
 |---|---|---|
-| 1 | [`MASTER_SPEC.md`](MASTER_SPEC.md) | Documento canônico. Todas as regras do produto. |
-| 2 | [`AGENTS.md`](AGENTS.md) | Contrato de trabalho para qualquer IA ou pessoa. |
-| 3 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Decisões registradas e o porquê de cada uma. |
-| 4 | [`docs/AI_HANDOFF.md`](docs/AI_HANDOFF.md) | Onde o projeto parou e o que vem agora. |
-| 5 | [`docs/TASKS.md`](docs/TASKS.md) | Backlog por fase. |
-| 6 | [`docs/DATABASE.md`](docs/DATABASE.md) | Modelo de dados e restrições. |
-| 7 | [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) | O que existe em cada computador. |
+| 1 | [`docs/RESUME.md`](docs/RESUME.md) | **Retomar em outra máquina.** Comece por aqui. |
+| 2 | [`MASTER_SPEC.md`](MASTER_SPEC.md) | Documento canônico. Todas as regras do produto. |
+| 3 | [`AGENTS.md`](AGENTS.md) | Contrato de trabalho para qualquer IA ou pessoa. |
+| 4 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Decisões registradas e o porquê de cada uma. |
+| 5 | [`docs/AI_HANDOFF.md`](docs/AI_HANDOFF.md) | Onde o projeto parou e o que vem agora. |
+| 6 | [`docs/TASKS.md`](docs/TASKS.md) | Backlog por fase. |
+| 7 | [`docs/DATABASE.md`](docs/DATABASE.md) | Modelo de dados e restrições. |
+| 8 | [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) | O que existe em cada computador. |
 
 ## Regra de ouro
 

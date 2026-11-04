@@ -79,15 +79,8 @@ propor alternativa com ADR — não trocar de biblioteca por conta própria.
 
 ### Se estiver na máquina de build agora
 
-Copie e cole:
-
-```powershell
-git clone https://github.com/jonesjoaovictor-alt/driver-app.git
-cd driver-app
-npm.cmd install
-npm.cmd run typecheck
-npx.cmd expo-doctor
-```
+Página de retomada: `docs/RESUME.md`. Ela tem os comandos exatos e o que
+devolver como resultado.
 
 ## O que NÃO fazer agora
 

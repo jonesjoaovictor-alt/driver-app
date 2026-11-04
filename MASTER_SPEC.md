@@ -752,6 +752,7 @@ driver-app/
 │   ├── AI_HANDOFF.md
 │   ├── ENVIRONMENT.md
 │   ├── BUILD_MACHINE.md
+│   ├── RESUME.md
 │   ├── AUDIT_FASE_0.md
 │   ├── DEPLOYMENT.md
 │   └── TROUBLESHOOTING.md
