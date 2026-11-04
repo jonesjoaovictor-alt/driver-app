@@ -69,5 +69,7 @@ ADR-001 a ADR-016 em `docs/DECISIONS.md`. Pendências P-01 a P-06.
 
 ## 7. Próximo passo
 
-`git init`, commit inicial, repositório privado no GitHub e push. Depois,
-parar e aguardar autorização para a FASE 1B.
+FASE 1A encerrada. Commit `7e75469` publicado em
+`github.com/jonesjoaovictor-alt/driver-app`.
+
+Aguardando autorização para a FASE 1B (projeto Expo).

@@ -71,6 +71,14 @@ adb devices
 
 ## Continuidade entre máquinas
 
+| Item | Valor |
+|---|---|
+| Remote oficial | `https://github.com/jonesjoaovictor-alt/driver-app.git` |
+| Visibilidade | Privado |
+| Branch principal | `main` |
+| Primeiro commit | `7e75469` |
+| Autenticação do push | Git Credential Manager (system) |
+
 O que viaja pelo Git: código, documentação, prompts, decisões e histórico.
 
 O que **não** viaja e precisa ser recriado:

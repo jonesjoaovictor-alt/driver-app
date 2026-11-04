@@ -5,7 +5,8 @@ aprovada. Se este arquivo estiver desatualizado, ele é a primeira coisa a
 corrigir.
 
 **Última atualização:** 2026-11-03
-**Fase:** 1A — fundação documental
+**Fase:** 1A concluída — aguardando autorização para 1B
+**Remote:** `github.com/jonesjoaovictor-alt/driver-app` (privado)
 **Compila Android nesta máquina:** não (ver `docs/ENVIRONMENT.md`)
 
 ---
@@ -29,27 +30,26 @@ O que foi decidido está em `docs/DECISIONS.md` (16 ADRs). O que falta está em
 5. Especificação revisada para 1.1.0.
 6. Criação de `AGENTS.md`, `README.md`, `CHANGELOG.md`, `docs/`, `PROMPTS/`,
    `AI_LOG/`.
+7. Commit `7e75469` publicado no repositório privado.
 
 ## Próximo passo exato
 
-**FASE 1A, itens finais.** O repositório já foi inicializado e os 20 arquivos
-estão preparados (`git add`). Falta apenas a identidade do autor.
+A FASE 1A está encerrada. Commit `7e75469` publicado em
+`github.com/jonesjoaovictor-alt/driver-app`.
+
+**Próximo passo:** aguardar autorização expressa do responsável para iniciar
+a **FASE 1B — Projeto Expo**.
+
+Quando autorizado, a ordem é:
 
 ```powershell
-cd C:\Users\jones\Documents\driver-app
-git config user.name "SEU NOME"
-git config user.email "SEU-EMAIL-DO-GITHUB"
-git commit -m "docs: fundacao documental e spec v1.1.0"
+npx create-expo-app@latest . --template blank-typescript
+npx expo install --fix
+npx expo-doctor
 ```
 
-O `gh` CLI 2.103.3 está instalado, mas não autenticado:
-
-```powershell
-gh auth login          # escolher GitHub.com e login pelo navegador
-gh repo create driver-app --private --source . --remote origin --push
-```
-
-Depois disso, **parar** e aguardar autorização para a FASE 1B.
+Antes disso, confirmar a versão LTS de Node homologada pelo Expo (ADR-016).
+Não criar telas, backend ou GPS nesta fase.
 
 ## O que NÃO fazer agora
 

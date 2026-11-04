@@ -25,9 +25,10 @@ Fases oficiais estão no `MASTER_SPEC.md` §23.
 -   [x] `PROMPTS/`
 -   [x] `AI_LOG/`
 -   [x] `git init` (branch `main`, 20 arquivos rastreados)
--   [ ] Identidade do Git configurada (nome e e-mail)
--   [ ] Primeiro commit
--   [ ] Autenticar `gh` e criar repositório privado + `git push`
+-   [x] Identidade do Git configurada (`jonejoaovictor <jonejoaovictor@gmail.com>`)
+-   [x] Primeiro commit `7e75469` (2512 linhas)
+-   [x] Repositório privado criado e `git push` concluído
+-   [ ] Autorização para a FASE 1B
 -   [ ] `CONTRIBUTING.md` (pode esperar a FASE 1B)
 
 ---
