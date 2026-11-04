@@ -49,7 +49,23 @@ Fases oficiais estão no `MASTER_SPEC.md` §23.
 
 ## FASE 2 — Interface · `[ ]`
 
--   [ ] **Prova do MapLibre** (bloqueia todo o resto da fase)
+Dividida em 2A (viabilidade) e 2B (produto). **2B não começa sem 2A aprovada.**
+
+### FASE 2A — Prova do MapLibre · `[ ]` · máquina de build
+
+-   [ ] Clonar o repositório na máquina de build
+-   [ ] Instalar JDK 17, Android Studio, SDK 37, NDK 27.1
+-   [ ] `npm install` + `expo-doctor` 20/20 nessa máquina
+-   [ ] Instalar `@maplibre/maplibre-react-native`
+-   [ ] Configurar plugin do Expo
+-   [ ] `expo prebuild` + Development Build no aparelho físico
+-   [ ] Mapa renderizando com atribuição visível
+-   [ ] Marcar arrastar e zoom
+-   [ ] Registrar resultado em `docs/MAPS.md`
+-   [ ] Decisão registrada: aprovado ou alternativa
+
+### FASE 2B — Interface · `[ ]`
+
 -   [ ] Identidade visual: nome, paleta, tipografia
 -   [ ] Tela de login
 -   [ ] Tela do motorista: online/offline e mapa

@@ -3,6 +3,23 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.3.0] — 2026-11-04
+
+Preparação da prova de viabilidade do mapa (FASE 2A).
+
+### Adicionado
+
+-   `docs/BUILD_MACHINE.md`: instalação da máquina de build, verificação
+    obrigatória e critério de aceite da prova.
+-   `docs/MAPS.md`: decisão de mapa e ficha de resultado da prova.
+-   `PROMPTS/PHASE_2A.md`: escopo fechado da prova do MapLibre.
+-   FASE 2 dividida em 2A (viabilidade) e 2B (produto).
+
+### Alterado
+
+-   `MASTER_SPEC.md` §17 passa a listar `BUILD_MACHINE.md` e
+    `AUDIT_FASE_0.md`.
+
 ## [1.2.0] — 2026-11-04
 
 FASE 1B: projeto Expo criado. Ainda **sem telas, backend ou GPS**.

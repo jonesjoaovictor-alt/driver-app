@@ -61,7 +61,23 @@ Verificado que `@maplibre/maplibre-react-native` 11.5.1 exige `expo >= 54` e
 -   Nenhum GPS, permissão ou MapLibre instalado.
 -   Nenhum JDK ou Android Studio nesta máquina.
 
-## 6. Próximo passo
+## 6. Incidente de integridade
 
-FASE 2, começando pela **prova do MapLibre** em Development Build. Nenhuma
-tela antes disso.
+O `.gitignore` foi encontrado com 580 bytes de zeros — mesmo tamanho do
+original, conteúdo destruído. O Git não detectou, porque confia em tamanho e
+data.
+
+Detecção: varredura byte a byte. Correção: conteúdo restaurado, `.git/index.lock`
+removido, `git add` refeito, staging conferido antes do commit. Varredura final
+em todos os arquivos: nenhum outro corrompido. Os PNGs acusaram falso positivo
+por conterem zeros por natureza; a assinatura `89504E47` foi validada.
+
+Causa provável: encerramento abrupto do processo. Não é problema do projeto.
+
+## 7. Próximo passo
+
+A decisão foi o **caminho A**: ir para a máquina de build agora.
+
+Como esta máquina não compila Android, a entrega é operacional: guia completo,
+prompt da prova e critério de aceite. Ver `docs/BUILD_MACHINE.md` e
+`PROMPTS/PHASE_2A.md`.

@@ -751,6 +751,8 @@ driver-app/
 │   ├── TASKS.md
 │   ├── AI_HANDOFF.md
 │   ├── ENVIRONMENT.md
+│   ├── BUILD_MACHINE.md
+│   ├── AUDIT_FASE_0.md
 │   ├── DEPLOYMENT.md
 │   └── TROUBLESHOOTING.md
 ├── tests/

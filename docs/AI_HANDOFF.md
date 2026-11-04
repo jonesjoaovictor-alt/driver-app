@@ -5,7 +5,7 @@ aprovada. Se este arquivo estiver desatualizado, ele é a primeira coisa a
 corrigir.
 
 **Última atualização:** 2026-11-04
-**Fase:** 1B concluída — aguardando autorização para a FASE 2
+**Fase:** 1B concluída · próxima é 2A (prova do MapLibre, na máquina de build)
 **Remote:** `github.com/jonesjoaovictor-alt/driver-app` (privado)
 **Compila Android nesta máquina:** não (ver `docs/ENVIRONMENT.md`)
 
@@ -58,20 +58,36 @@ Stack verificada em 2026-11-04:
 
 ## Próximo passo exato
 
-**FASE 2 — Interface. Mas ela começa pela prova do MapLibre, não pela tela.**
+**FASE 2A — Prova do MapLibre na máquina de build.**
+Guia completo: `docs/BUILD_MACHINE.md`. Prompt da tarefa:
+`PROMPTS/PHASE_2A.md`.
 
-Ordem obrigatória:
+Sequência:
 
-1. Autorização do responsável.
-2. Prova isolada: instalar `@maplibre/maplibre-react-native` 11.5.1,
-   configurar o plugin do Expo, gerar Development Build e exibir um mapa
-   com OpenFreeMap.
-3. Se o mapa funcionar: registrar o resultado e seguir para a identidade
-   visual.
-4. Se não funcionar: **parar**, registrar a evidência e propor alternativa
-   antes de escrever qualquer tela.
+1. Na máquina de build, clonar o repositório e rodar `npm.cmd install`,
+   `npm.cmd run typecheck` e `npx.cmd expo-doctor`.
+2. Instalar JDK 17, Android Studio, SDK 37 e NDK 27.1.12297006.
+3. Confirmar `adb devices` mostrando o aparelho como `device`.
+4. Instalar `@maplibre/maplibre-react-native`, configurar o plugin conforme a
+   documentação do pacote.
+5. `npx.cmd expo prebuild --platform android` e
+   `npx.cmd expo run:android --device`.
+6. Preencher `docs/MAPS.md` com o resultado real.
 
-Nada de telas antes de o mapa estar provado (P-01).
+**Nenhuma tela de produto antes de a prova passar.** Se falhar, parar e
+propor alternativa com ADR — não trocar de biblioteca por conta própria.
+
+### Se estiver na máquina de build agora
+
+Copie e cole:
+
+```powershell
+git clone https://github.com/jonesjoaovictor-alt/driver-app.git
+cd driver-app
+npm.cmd install
+npm.cmd run typecheck
+npx.cmd expo-doctor
+```
 
 ## O que NÃO fazer agora
 
