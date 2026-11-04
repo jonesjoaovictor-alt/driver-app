@@ -3,6 +3,28 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.8.0] — 2026-11-04
+
+Decisão técnica oficial: escopo Android exclusivamente.
+
+### Adicionado
+
+- `docs/DECISIONS.md`: ADR-020 — Escopo do projeto: Android exclusivamente, com
+  regras para futuras IAs e desenvolvedores.
+- `docs/AI_HANDOFF.md`: menção ao escopo Android exclusivamente no contexto
+  do projeto.
+- `BUILD_MACHINE_HANDOFF.md`: seção dedicada ao escopo Android exclusivamente
+  (seção 9).
+
+### Importante
+
+- O DRIVER APP será desenvolvido, compilado e distribuído somente para
+  Android. Não há suporte a iOS, iPhone, Xcode, CocoaPods, Swift ou
+  Objective-C.
+- Nenhuma referência a iOS foi encontrada nos documentos existentes; a
+  decisão foi registrada como ADR oficial para evitar expansão de escopo não
+  autorizada.
+
 ## [1.7.0] — 2026-11-04
 
 Camada de serviços e infraestrutura do aplicativo.
