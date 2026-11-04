@@ -3,6 +3,38 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.7.0] — 2026-11-04
+
+Camada de serviços e infraestrutura do aplicativo.
+
+### Adicionado
+
+- Git local inicializado (branch `main`), 10 commits, remoto GitHub sincronizado
+- `src/services/rides.ts`: chamadas RPC para aceitar, chegar, iniciar, concluir,
+  cancelar, listar ofertas, definir disponibilidade, consultar corrida ativa
+- `src/services/location.ts`: permissões, leitura única e rastreamento contínuo
+  de GPS com Expo Location
+- `src/database/local/sqlite.ts`: cache mínimo local (corrida ativa + fila de
+  posições GPS pendentes, limite 50)
+- `src/services/notifications.ts`: notificação persistente durante serviço de
+  localização (Expo Notifications)
+- `src/services/realtime.ts`: inscrição Supabase Realtime para corridas e
+  localizações, com reconciliação após reconexão
+- `src/hooks/useRides.ts`: hook de corridas com sincronização servidor/cache
+- `src/hooks/useLocation.ts`: hook de GPS com fila de posições pendentes
+- `src/types/database.ts`: tipos das funções RPC adicionados ao Database
+
+### Corrigido
+
+- `expo-doctor`: 20/20 checks aprovados
+- `tsc --noEmit`: sem erros
+
+### Importante
+
+- Nenhuma migração foi aplicada (banco Supabase não existe ainda)
+- Prova do MapLibre (FASE 2A) não executada (requer máquina de build com aparelho físico)
+- Nenhuma tela de produto adicional criada antes da prova do MapLibre
+
 ## [1.6.0] — 2026-11-04
 
 Retomada do desenvolvimento após auditoria completa.
