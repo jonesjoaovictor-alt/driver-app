@@ -3,6 +3,39 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Versionamento semântico aplicado à **documentação e ao produto**.
 
+## [1.6.0] — 2026-11-04
+
+Retomada do desenvolvimento após auditoria completa.
+
+### Adicionado
+
+- Repositório Git local inicializado (branch `main`), remote configurado
+- Correções críticas em `supabase/migrations/0007_rpc.sql`:
+  - Erro de sintaxe (parêntese faltando em `cancel_ride`)
+  - Referência a coluna inexistente (`drivers.vehicle_id` em `accept_ride`)
+  - Tipos incompatíveis em `cancel_ride` (`cancel_actor`, `actor_profile_id`)
+  - Funções gravadoras de `stable` → `volatile`
+  - Validação de identidade do chamador via `current_driver_id()` em accept/complete/transições
+  - Recibo de idempotência na aceitação de corrida
+- `supabase/migrations/0008_seed.sql`: dados fictícios (5 passageiros, estrutura para 5 motoristas e veículos)
+- `supabase/functions/admin-create-driver/index.ts`: Edge Function para criação de contas de motorista
+- Dependências do app: @supabase/supabase-js, expo-sqlite, expo-location, expo-task-manager, expo-notifications, @maplibre/maplibre-react-native, @react-navigation/native, @react-navigation/stack, react-native-screens, react-native-safe-area-context, react-native-gesture-handler
+- `app.json`: plugin do MapLibre (`app.plugin.js`) com permissões de localização
+- `tsconfig.json`: exclusão de `supabase/functions/` do typecheck
+- Código base do aplicativo: tipos DB, cliente Supabase, AuthProvider, navegação, LoginScreen, DriverScreen
+- `docs/AI_HANDOFF.md`, `docs/TASKS.md` atualizados com o estado real
+
+### Corrigido
+
+- `expo-doctor`: 20/20 checks aprovados após correção do plugin MapLibre e gesture-handler
+- `tsc --noEmit`: sem erros
+
+### Importante
+
+- Nenhuma migração foi aplicada (banco Supabase não existe ainda)
+- Prova do MapLibre (FASE 2A) não executada (requer máquina de build com aparelho físico)
+- Push para o remote GitHub pendente (timeout/autenticação nesta máquina)
+
 ## [1.5.0] — 2026-11-04
 
 Avanço em desenho de backend, sem aplicar nada em banco.
