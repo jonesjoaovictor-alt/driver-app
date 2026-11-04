@@ -5,7 +5,7 @@ aprovada. Se este arquivo estiver desatualizado, ele é a primeira coisa a
 corrigir.
 
 **Última atualização:** 2026-11-04
-**Fase:** 1B concluída · camada de serviços da FASE 2 criada · próxima: 2A (prova do MapLibre, na máquina de build)
+**Fase:** 1B concluída · camada de serviços da FASE 2 criada · correções SQL (Fase B) e configuração Supabase local (Fase C) aplicadas · próxima: 2A (prova do MapLibre, na máquina de build)
 **Remote:** `github.com/jonesjoaovictor-alt/driver-app` (privado) — sincronizado (push concluído)
 **Compila Android nesta máquina:** não (ver `docs/ENVIRONMENT.md`)
 **Git local:** branch `main`, 10 commits, remoto sincronizado
@@ -28,8 +28,9 @@ instaladas, código base do app e camada de serviços desenvolvidos.
 | Projeto Expo | SDK 58, `20/20` no doctor, `tsc` limpo |
 | Dependências instaladas | Supabase, SQLite, Location, Task Manager, Notifications, MapLibre, React Navigation, gesture-handler, screens, safe-area |
 | MapLibre | instalado, plugin configurado em app.json, **não provado em aparelho** |
-| SQL do banco | 7 migrações escritas (0007 corrigido) + 0008_seed.sql; **0 aplicadas** |
+| SQL do banco | 8 migrações escritas + 0009 corretiva (timestamps); **0 aplicadas** |
 | Edge Function | admin-create-driver criada |
+| Supabase CLI | config.toml criado; .env criado (chave anon pendente) |
 | Código do app | tipos DB, cliente Supabase, AuthProvider, navegação, LoginScreen, DriverScreen (base) |
 | Camada de serviços | rides.ts (RPCs), location.ts (GPS), sqlite.ts (cache local), notifications.ts (persistente), realtime.ts (Supabase Realtime) |
 | Hooks | useRides.ts, useLocation.ts |

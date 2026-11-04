@@ -19,15 +19,20 @@ O DRIVER APP está na conclusão da FASE 1B e início da FASE 2 (interface). O p
 - Código base do app: tipos DB, cliente Supabase, AuthProvider, navegação, LoginScreen, DriverScreen (base)
 - Camada de serviços: rides.ts (RPCs), location.ts (GPS), sqlite.ts (cache local), notifications.ts (persistente), realtime.ts (Supabase Realtime)
 - Hooks: useRides.ts, useLocation.ts
-- Migrações SQL 0001 a 0008 escritas e corrigidas (0007_rpc.sql corrigido: sintaxe, tipos, identidade, idempotência)
+- Migrações SQL 0001 a 0008 escritas e corrigidas (0007_rpc.sql corrigido: sintaxe, tipos, identidade, idempotência) + 0009_active_rides_timestamps.sql (corretiva: started_at >= arrived_at)
 - Edge Function admin-create-driver escrita
 - ADR-020 registrada: escopo Android exclusivamente
+- Supabase CLI: supabase/config.toml criado
+- Variáveis de ambiente: .env criado (chave anon pendente de valor real)
+- Relatório de integração: docs/SUPABASE_INTEGRATION_REPORT.md criado
 
 ## O que está pendente
 
-- Criar `.env` com credenciais do Supabase (bloqueador: `EXPO_PUBLIC_SUPABASE_URL` e `EXPO_PUBLIC_SUPABASE_ANON_KEY` ausentes)
-- Criar projeto Supabase e aplicar migrações 0001 a 0008
+- Preencher `.env` com chave anon real do Supabase (`EXPO_PUBLIC_SUPABASE_ANON_KEY` — valor fornecido pelo proprietário)
+- Vincular Supabase CLI (`supabase link --project-ref igsmfodwdobetfeozuim`)
+- Aplicar migrações 0001 a 0009 no banco remoto
 - Desativar cadastro público no Supabase Auth
+- Provisionar primeiro administrador (procedimento manual no painel)
 - Implantar Edge Function admin-create-driver
 - Prova do MapLibre (FASE 2A) em aparelho físico (pré-requisito para telas)
 - Executar matriz de testes de segurança
@@ -36,8 +41,9 @@ O DRIVER APP está na conclusão da FASE 1B e início da FASE 2 (interface). O p
 
 - `CHANGELOG.md` — versão 1.8.0: ADR-020 (escopo Android exclusivamente)
 - `docs/DECISIONS.md` — ADR-020 adicionada
-- `docs/AI_HANDOFF.md` — menção ao escopo Android exclusivamente
+- `docs/AI_HANDOFF.md` — menção ao escopo Android exclusivamente; correções SQL e configuração Supabase
 - `docs/PROJECT_CHECKPOINT.md` — este arquivo (checkpoint de estado)
+- `docs/SUPABASE_INTEGRATION_REPORT.md` — correções, configuração CLI, pendências de integração remota
 
 ## Arquivos modificados NÃO incluídos neste commit
 

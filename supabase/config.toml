@@ -1,0 +1,34 @@
+# =============================================================================
+# Supabase CLI Configuration
+# DRIVER APP — Projeto: igsmfodwdobetfeozuim
+# =============================================================================
+
+[project]
+ref = "igsmfodwdobetfeozuim"
+
+[database]
+port = 5432
+
+[api]
+port = 54321
+
+[realtime]
+port = 54328
+
+[storage]
+port = 54329
+
+[edge_runtime]
+port = 54330
+
+[imagemagick]
+port = 54331
+
+[logflare]
+port = 54332
+
+[pooler]
+port = 54333
+
+[analytics]
+port = 54334
