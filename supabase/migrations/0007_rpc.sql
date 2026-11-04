@@ -34,15 +34,39 @@ create or replace function public.accept_ride(
 )
 returns uuid
 language plpgsql
-stable
+volatile
 security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_ride public.active_rides%rowtype;
   v_driver public.drivers%rowtype;
+  v_vehicle public.vehicles%rowtype;
+  v_actor_profile_id uuid;
+  v_already_processed boolean;
   v_result uuid;
 begin
+  -- Valida identidade do chamador: só o próprio motorista pode aceitar em nome de si mesmo
+  select public.current_driver_id() into v_driver.id;
+  if v_driver.id is null or v_driver.id <> p_driver_id then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'O driver_id informado não corresponde ao motorista autenticado.';
+  end if;
+
+  -- Idempotência: se já processou esta aceitação com esta chave, retorna sem efeito
+  select exists (
+    select 1
+    from public.ride_operations
+    where ride_id = p_ride_id
+      and operation = 'accept'
+      and idempotency_key = p_idempotency_key
+  ) into v_already_processed;
+
+  if v_already_processed then
+    return p_ride_id;
+  end if;
+
   -- Busca a corrida travada
   select * into v_ride
   from public.active_rides
@@ -69,7 +93,7 @@ begin
             detail = 'Esta corrida já tem veículo atribuído.';
   end if;
 
-  -- Verifica se o motorista está ativo
+  -- Verifica se o motorista está ativo e online
   select * into v_driver
   from public.drivers
   where id = p_driver_id
@@ -81,10 +105,29 @@ begin
             detail = 'O motorista não está online ou está inativo.';
   end if;
 
+  -- Busca o veículo ativo do motorista (um veículo ativo por motorista)
+  select * into v_vehicle
+  from public.vehicles
+  where driver_id = p_driver_id
+    and is_active = true
+  limit 1;
+
+  if not found then
+    raise exception 'MOTORISTA_SEM_VEICULO'
+      using errcode = '42501',
+            detail = 'O motorista não possui um veículo ativo vinculado.';
+  end if;
+
+  -- Obtém o profile_id do motorista para o recibo de operação
+  select p.id into v_actor_profile_id
+  from public.profiles p
+  join public.drivers d on d.profile_id = p.id
+  where d.id = p_driver_id;
+
   -- Aplica a transição atômica
   update public.active_rides
   set driver_id = p_driver_id,
-      vehicle_id = v_driver.vehicle_id,  -- assumes driver has a default vehicle or we set via trigger
+      vehicle_id = v_vehicle.id,
       status = 'accepted',
       accepted_at = now(),
       version = version + 1
@@ -99,6 +142,20 @@ begin
   if v_result = 0 then
     raise exception 'NAO_FOI_POSSÍVEL_ACEITAR' using errcode = '42501';
   end if;
+
+  -- Grava recibo de idempotência da aceitação
+  insert into public.ride_operations (
+    ride_id,
+    operation,
+    actor_profile_id,
+    idempotency_key
+  )
+  values (
+    p_ride_id,
+    'accept',
+    v_actor_profile_id,
+    p_idempotency_key
+  );
 
   return p_ride_id;
 end
@@ -116,13 +173,22 @@ create or replace function public.mark_driver_arriving(
 )
 returns uuid
 language plpgsql
-stable
+volatile
 security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_ride public.active_rides%rowtype;
+  v_actor_driver_id uuid;
 begin
+  -- Valida identidade do chamador
+  select public.current_driver_id() into v_actor_driver_id;
+  if v_actor_driver_id is null or v_actor_driver_id <> p_driver_id then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'O driver_id informado não corresponde ao motorista autenticado.';
+  end if;
+
   select * into v_ride
   from public.active_rides
   where id = p_ride_id
@@ -164,13 +230,22 @@ create or replace function public.mark_arrived(
 )
 returns uuid
 language plpgsql
-stable
+volatile
 security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_ride public.active_rides%rowtype;
+  v_actor_driver_id uuid;
 begin
+  -- Valida identidade do chamador
+  select public.current_driver_id() into v_actor_driver_id;
+  if v_actor_driver_id is null or v_actor_driver_id <> p_driver_id then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'O driver_id informado não corresponde ao motorista autenticado.';
+  end if;
+
   select * into v_ride
   from public.active_rides
   where id = p_ride_id
@@ -212,13 +287,22 @@ create or replace function public.start_ride(
 )
 returns uuid
 language plpgsql
-stable
+volatile
 security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_ride public.active_rides%rowtype;
+  v_actor_driver_id uuid;
 begin
+  -- Valida identidade do chamador
+  select public.current_driver_id() into v_actor_driver_id;
+  if v_actor_driver_id is null or v_actor_driver_id <> p_driver_id then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'O driver_id informado não corresponde ao motorista autenticado.';
+  end if;
+
   select * into v_ride
   from public.active_rides
   where id = p_ride_id
@@ -264,21 +348,37 @@ create or replace function public.complete_ride(
 )
 returns uuid
 language plpgsql
-stable
+volatile
 security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_ride public.active_rides%rowtype;
   v_already_processed boolean;
+  v_actor_driver_id uuid;
+  v_actor_profile_id uuid;
 begin
+  -- Valida identidade do chamador
+  select public.current_driver_id() into v_actor_driver_id;
+  if v_actor_driver_id is null or v_actor_driver_id <> p_driver_id then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'O driver_id informado não corresponde ao motorista autenticado.';
+  end if;
+
+  -- Obtém o profile_id do motorista para o recibo
+  select p.id into v_actor_profile_id
+  from public.profiles p
+  join public.drivers d on d.profile_id = p.id
+  where d.id = p_driver_id;
+
   -- Verifica idempotência antes de tocar na corrida.
   select exists (
     select 1
     from public.ride_operations
     where ride_id = p_ride_id
       and operation = 'complete'
-      and actor_profile_id = (select profile_id from public.drivers where id = p_driver_id)
+      and actor_profile_id = v_actor_profile_id
       and idempotency_key = p_idempotency_key
   ) into v_already_processed;
 
@@ -317,7 +417,7 @@ begin
     values (
       p_ride_id,
       'complete',
-      (select profile_id from public.drivers where id = p_driver_id),
+      v_actor_profile_id,
       p_idempotency_key
     );
 
@@ -352,21 +452,53 @@ create or replace function public.cancel_ride(
 )
 returns uuid
 language plpgsql
-stable
+volatile
 security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_ride public.active_rides%rowtype;
   v_actor_is_admin boolean;
+  v_actor_profile_id uuid;
+  v_cancel_actor public.cancel_actor;
 begin
+  -- Verifica se o ator é admin
+  v_actor_is_admin := public.is_admin();
+
+  -- Se não é admin, valida identidade do chamador
+  if not v_actor_is_admin then
+    declare
+      v_actor_driver_id uuid;
+    begin
+      select public.current_driver_id() into v_actor_driver_id;
+      if v_actor_driver_id is null or v_actor_driver_id <> p_driver_id then
+        raise exception 'MOTORISTA_NAO_AUTENTICADO'
+          using errcode = '42501',
+                detail = 'O driver_id informado não corresponde ao motorista autenticado.';
+      end if;
+
+      -- Obtém o profile_id do motorista
+      select p.id into v_actor_profile_id
+      from public.profiles p
+      join public.drivers d on d.profile_id = p.id
+      where d.id = p_driver_id;
+    end;
+  else
+    -- Admin: obtém o profile_id do admin autenticado
+    select public.current_profile_id() into v_actor_profile_id;
+  end if;
+
+  -- Define o ator do cancelamento para o campo cancelled_by (enum cancel_actor)
+  if v_actor_is_admin then
+    v_cancel_actor := 'admin'::public.cancel_actor;
+  else
+    v_cancel_actor := 'driver'::public.cancel_actor;
+  end if;
+
   select * into v_ride
   from public.active_rides
   where id = p_ride_id
     for update;
-
-  -- Verifica se o ator é admin
-  v_actor_is_admin := public.is_admin();
 
   -- Validação por estado e ator (ADR-008)
   if v_actor_is_admin then
@@ -377,7 +509,7 @@ begin
     end if;
   else
     -- Motorista só pode cancelar em estados iniciais
-    if not (v_ride.status = 'requested' then
+    if not (v_ride.status = 'requested') then
       raise exception 'CANCELAMENTO_EM_ESTADO_INCORRETO'
         using errcode = '42501',
               detail = 'Motoristas só podem cancelar solicitações (status requested).';
@@ -388,7 +520,7 @@ begin
   update public.active_rides
   set status = 'cancelled',
       cancelled_at = now(),
-      cancelled_by = case when v_actor_is_admin then 'admin' else p_driver_id end,
+      cancelled_by = v_cancel_actor,
       cancel_reason = p_reason,
       version = version + 1
   where id = p_ride_id
@@ -398,7 +530,7 @@ begin
     raise exception 'CONCORRENCIA';
   end if;
 
-  -- Grava recibo técnico
+  -- Grava recibo técnico (com idempotency_key para repetição segura)
   insert into public.ride_operations (
     ride_id,
     operation,
@@ -408,7 +540,7 @@ begin
   values (
     p_ride_id,
     'cancel',
-    case when v_actor_is_admin then null else p_driver_id end,
+    v_actor_profile_id,
     gen_random_uuid()
   );
 
@@ -460,6 +592,347 @@ $$;
 
 revoke all on function public.list_available_rides() from public;
 grant execute on function public.list_available_rides() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- set_availability
+-- -----------------------------------------------------------------------------
+-- Motorista define sua própria disponibilidade. 'busy' só é atribuído pelo
+-- backend na aceitação, nunca pelo cliente (MASTER_SPEC.md §8).
+--
+create or replace function public.set_availability(
+  p_availability public.driver_availability
+)
+returns void
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_driver_id uuid;
+  v_actor_driver_id uuid;
+begin
+  -- Valida identidade do chamador
+  select public.current_driver_id() into v_actor_driver_id;
+  if v_actor_driver_id is null then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'Motorista não autenticado.';
+  end if;
+
+  -- 'busy' só é definido pelo backend na aceitação da corrida
+  if p_availability = 'busy' then
+    raise exception 'DISPONIBILIDADE_BUSY_PROIBIDA'
+      using errcode = '42501',
+            detail = 'O cliente não pode definir availability como busy.';
+  end if;
+
+  select id into v_driver_id
+  from public.drivers
+  where id = v_actor_driver_id
+    for update;
+
+  update public.drivers
+  set availability = p_availability,
+      last_seen_at = now(),
+      version = version + 1
+  where id = v_driver_id;
+end
+$$;
+
+revoke all on function public.set_availability() from public;
+grant execute on function public.set_availability() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- upsert_location
+-- -----------------------------------------------------------------------------
+-- Motorista atualiza sua própria localização ao vivo. Upsert: uma linha por
+-- motorista. Não armazena histórico de trajetos (MASTER_SPEC.md §9, §11).
+--
+create or replace function public.upsert_location(
+  p_latitude numeric(9, 6),
+  p_longitude numeric(9, 6),
+  p_accuracy numeric(8, 2),
+  p_heading numeric(6, 2),
+  p_speed numeric(8, 2),
+  p_recorded_at timestamptz
+)
+returns void
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_driver_id uuid;
+begin
+  -- Valida identidade do chamador
+  select public.current_driver_id() into v_driver_id;
+  if v_driver_id is null then
+    raise exception 'MOTORISTA_NAO_AUTENTICADO'
+      using errcode = '42501',
+            detail = 'Motorista não autenticado.';
+  end if;
+
+  -- Valida coordenadas (defesa em profundidade, além do CHECK da tabela)
+  if p_latitude < -90 or p_latitude > 90 then
+    raise exception 'LATITUDE_INVALIDA' using errcode = '23514';
+  end if;
+  if p_longitude < -180 or p_longitude > 180 then
+    raise exception 'LONGITUDE_INVALIDA' using errcode = '23514';
+  end if;
+
+  insert into public.driver_live_locations (
+    driver_id, latitude, longitude, accuracy, heading, speed, recorded_at
+  )
+  values (
+    v_driver_id, p_latitude, p_longitude, p_accuracy, p_heading, p_speed, p_recorded_at
+  )
+  on conflict (driver_id) do update
+  set latitude = excluded.latitude,
+      longitude = excluded.longitude,
+      accuracy = excluded.accuracy,
+      heading = excluded.heading,
+      speed = excluded.speed,
+      recorded_at = excluded.recorded_at,
+      updated_at = now();
+end
+$$;
+
+revoke all on function public.upsert_location() from public;
+grant execute on function public.upsert_location() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- create_ride (admin)
+-- -----------------------------------------------------------------------------
+-- Administração cria uma solicitação de corrida. Exige passageiro ativo e
+-- livre (sem corrida ativa). Respeita o limite de uma corrida ativa por
+-- passageiro via índice único em active_rides(passenger_id).
+--
+create or replace function public.create_ride(
+  p_passenger_id uuid,
+  p_pickup_latitude numeric(9, 6),
+  p_pickup_longitude numeric(9, 6),
+  p_pickup_label text,
+  p_destination_latitude numeric(9, 6),
+  p_destination_longitude numeric(9, 6),
+  p_destination_label text,
+  p_estimated_fare_cents integer
+)
+returns uuid
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_actor_profile_id uuid;
+  v_ride_id uuid;
+begin
+  -- Apenas admin
+  if not public.is_admin() then
+    raise exception 'APENAS_ADMIN' using errcode = '42501';
+  end if;
+
+  select public.current_profile_id() into v_actor_profile_id;
+
+  -- Verifica passageiro ativo
+  if not exists (
+    select 1 from public.passengers
+    where id = p_passenger_id and is_active = true
+  ) then
+    raise exception 'PASSAGEIRO_INATIVO_OU_INEXISTENTE' using errcode = '23514';
+  end if;
+
+  -- Insere a corrida (o índice único em passenger_id impede duplicidade)
+  insert into public.active_rides (
+    passenger_id, pickup_latitude, pickup_longitude, pickup_label,
+    destination_latitude, destination_longitude, destination_label,
+    estimated_fare_cents, status
+  )
+  values (
+    p_passenger_id, p_pickup_latitude, p_pickup_longitude, p_pickup_label,
+    p_destination_latitude, p_destination_longitude, p_destination_label,
+    p_estimated_fare_cents, 'requested'
+  )
+  returning id into v_ride_id;
+
+  return v_ride_id;
+end
+$$;
+
+revoke all on function public.create_ride() from public;
+grant execute on function public.create_ride() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- create_driver (admin)
+-- -----------------------------------------------------------------------------
+-- Administração cria o cadastro operacional de um motorista vinculado a um
+-- profile existente. Respeita o limite de 5 via trigger trg_drivers_limit.
+--
+create or replace function public.create_driver(
+  p_profile_id uuid
+)
+returns uuid
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_driver_id uuid;
+begin
+  -- Apenas admin
+  if not public.is_admin() then
+    raise exception 'APENAS_ADMIN' using errcode = '42501';
+  end if;
+
+  -- Verifica se o profile existe e é ativo
+  if not exists (
+    select 1 from public.profiles
+    where id = p_profile_id and is_active = true and role = 'driver'
+  ) then
+    raise exception 'PROFILE_INVALIDO' using errcode = '23514';
+  end if;
+
+  -- Não permite driver duplicado para o mesmo profile
+  if exists (
+    select 1 from public.drivers where profile_id = p_profile_id
+  ) then
+    raise exception 'DRIVER_JA_EXISTENTE' using errcode = '23514';
+  end if;
+
+  insert into public.drivers (profile_id, is_active, availability)
+  values (p_profile_id, true, 'offline')
+  returning id into v_driver_id;
+
+  return v_driver_id;
+end
+$$;
+
+revoke all on function public.create_driver() from public;
+grant execute on function public.create_driver() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- create_passenger (admin)
+-- -----------------------------------------------------------------------------
+-- Administração cria um passageiro fictício. Respeita o limite de 5 via
+-- trigger trg_passengers_limit.
+--
+create or replace function public.create_passenger(
+  p_name text,
+  p_phone text
+)
+returns uuid
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_passenger_id uuid;
+begin
+  -- Apenas admin
+  if not public.is_admin() then
+    raise exception 'APENAS_ADMIN' using errcode = '42501';
+  end if;
+
+  insert into public.passengers (name, phone, is_active)
+  values (p_name, p_phone, true)
+  returning id into v_passenger_id;
+
+  return v_passenger_id;
+end
+$$;
+
+revoke all on function public.create_passenger() from public;
+grant execute on function public.create_passenger() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- set_role (admin)
+-- -----------------------------------------------------------------------------
+-- Administração altera o papel de um perfil. Nunca permite que o próprio
+-- usuário eleve seu papel (protegido também pelo trigger protect_profile_fields).
+--
+create or replace function public.set_role(
+  p_profile_id uuid,
+  p_role public.profile_role
+)
+returns void
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Apenas admin
+  if not public.is_admin() then
+    raise exception 'APENAS_ADMIN' using errcode = '42501';
+  end if;
+
+  -- Não permite autoelevação/alteração do próprio papel
+  if p_profile_id = public.current_profile_id() then
+    raise exception 'AUTO_ELEVACAO_PROIBIDA' using errcode = '42501';
+  end if;
+
+  update public.profiles
+  set role = p_role,
+      version = version + 1
+  where id = p_profile_id;
+end
+$$;
+
+revoke all on function public.set_role() from public;
+grant execute on function public.set_role() to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- create_driver_account (transacional, usada pela Edge Function admin-create-driver)
+-- -----------------------------------------------------------------------------
+-- Cria profile + driver em uma única transação. Chamada com security definer
+-- para superar RLS (não há policy de INSERT em profiles para authenticated).
+-- Se qualquer passo falhar, o PostgreSQL faz rollback automático e a Edge
+-- Function remove o usuário do Auth para não deixar conta órfã (ADR-005).
+--
+create or replace function public.create_driver_account(
+  p_auth_user_id uuid,
+  p_full_name text,
+  p_phone text
+)
+returns uuid
+language plpgsql
+volatile
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_profile_id uuid;
+  v_driver_id uuid;
+begin
+  -- Insere o profile vinculado ao auth_user_id
+  insert into public.profiles (
+    auth_user_id, full_name, phone, role, is_active
+  )
+  values (
+    p_auth_user_id, p_full_name, p_phone, 'driver', true
+  )
+  returning id into v_profile_id;
+
+  -- Insere o cadastro operacional do motorista (offline por padrão)
+  -- O trigger trg_drivers_limit impõe o limite de 5
+  insert into public.drivers (
+    profile_id, is_active, availability
+  )
+  values (
+    v_profile_id, true, 'offline'
+  )
+  returning id into v_driver_id;
+
+  return v_driver_id;
+end
+$$;
+
+revoke all on function public.create_driver_account() from public;
+grant execute on function public.create_driver_account() to authenticated;
 
 -- -----------------------------------------------------------------------------
 -- Funções auxiliares (opcional, para uso interno)
